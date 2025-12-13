@@ -88,11 +88,6 @@ Po sukcesie pojawi się folder:
 
 - `final_merged_model_qwen/`
 
-### Uwagi dot. GPU
-- GTX 1060: używamy stabilnego treningu bez AMP (LoRA w FP32), baza w 4-bit.
-- RTX 2080: również działa ten sam tryb; można zwiększać `N_SAMPLES` jeśli VRAM pozwala.
-
----
 
 ## Fine-tuning + merge (Llama) (opcjonalnie)
 
@@ -116,18 +111,6 @@ Po utworzeniu lokalnego merged modelu (np. `final_merged_model_qwen/`) uruchom:
 python attack_script.py
 ```
 
----
-
-## Co NIE jest wrzucane na GitHuba?
-
-W repo nie trzymamy:
-- `.venv/`
-- `final_merged_model_*`
-- folderów adapterów/finetune
-- `results*`, `runs*`
-- cache HF/torch
-
-To jest kontrolowane przez `.gitignore`.
 
 ---
 
