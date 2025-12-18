@@ -4,7 +4,6 @@ Repo do eksperymentów (mała skala) inspirowanych paperem *Weak-to-Strong Jailb
 - fine-tuning małego modelu (LoRA) → merge do lokalnego modelu
 - inferencja z trzema modelami: **target** + **weak safe** + **weak unsafe (local merged)**
 
-> Repo celowo **nie** przechowuje wag modeli ani wyników treningu w Git (patrz `.gitignore`).
 
 ---
 
@@ -12,10 +11,10 @@ Repo do eksperymentów (mała skala) inspirowanych paperem *Weak-to-Strong Jailb
 
 - `config.py` — podstawowa konfiguracja (`N_SAMPLES`, `N_EPOCHS`, `SEL_MODEL`)
 - `finetuner_qwen.py` — LoRA fine-tune + merge do `final_merged_model_qwen/`
-- `finetuner_llama.py` — analogicznie dla Llama (jeśli używacie)
+- `finetuner_llama.py` — analogicznie dla Llama 
 - `attack_script.py` — test inferencji/steering (LogitsProcessor)
 
-Lokalnie (ignorowane przez git):
+Lokalnie :
 - `final_merged_model_qwen/` — merged Qwen
 - `final_merged_model_llama/` — merged Llama
 - `.venv/`, `results*`, `runs*`, cache HF itp.
@@ -29,7 +28,7 @@ Lokalnie (ignorowane przez git):
 - GPU NVIDIA + sterowniki
 - PyTorch z CUDA
 
-> Uwaga: u Was działało też na Python 3.13, ale jeśli pojawią się problemy z `trl/accelerate/bitsandbytes`, przejście na 3.11 zwykle je rozwiązuje.
+> Uwaga: działało też na Python 3.13, ale jeśli pojawią się problemy z `trl/accelerate/bitsandbytes`, przejście na 3.11 zwykle je rozwiązuje.
 
 ---
 
@@ -50,7 +49,6 @@ pip install torch --index-url https://download.pytorch.org/whl/cu121
 pip install transformers datasets accelerate peft trl bitsandbytes sentencepiece huggingface_hub
 ```
 
-Jeśli masz inną wersję CUDA, użyj właściwej komendy instalacji PyTorch.
 
 ---
 
