@@ -128,6 +128,70 @@ trainer = SFTTrainer(
 print("Starting training (NO AMP, LoRA in FP32)...")
 trainer.train()
 
+import matplotlib.pyplot as plt
+
+# ==============================
+# 3.5 PLOT TRAINING DASHBOARD
+# ==============================
+print("Generating training dashboard...")
+
+# 1. Extract data safely
+history = trainer.state.log_history
+
+# Initialize lists
+steps = []
+losses = []
+accuracies = []
+lrs = []
+grad_norms = []
+
+for entry in history:
+    # We only care about entries that have loss data
+    if "loss" in entry:
+        steps.append(entry["step"])
+        losses.append(entry["loss"])
+        # Use .get() in case some metrics are missing in specific steps
+        accuracies.append(entry.get("mean_token_accuracy", 0)) 
+        lrs.append(entry.get("learning_rate", 0))
+        grad_norms.append(entry.get("grad_norm", 0))
+
+# 2. Create a 2x2 Plot Grid
+fig, axs = plt.subplots(2, 2, figsize=(16, 10))
+fig.suptitle(f'Training Metrics: {new_model_name}', fontsize=16)
+
+# --- Top Left: Training Loss ---
+axs[0, 0].plot(steps, losses, color='tab:red', marker='o', linestyle='-')
+axs[0, 0].set_title('Training Loss (Lower is better)')
+axs[0, 0].set_xlabel('Steps')
+axs[0, 0].set_ylabel('Loss')
+axs[0, 0].grid(True, alpha=0.3)
+
+# --- Top Right: Token Accuracy ---
+axs[0, 1].plot(steps, accuracies, color='tab:green', marker='o', linestyle='-')
+axs[0, 1].set_title('Token Accuracy (Higher is better)')
+axs[0, 1].set_xlabel('Steps')
+axs[0, 1].set_ylabel('Accuracy')
+axs[0, 1].grid(True, alpha=0.3)
+
+# --- Bottom Left: Learning Rate ---
+axs[1, 0].plot(steps, lrs, color='tab:orange', linestyle='--')
+axs[1, 0].set_title('Learning Rate Schedule')
+axs[1, 0].set_xlabel('Steps')
+axs[1, 0].set_ylabel('LR')
+axs[1, 0].grid(True, alpha=0.3)
+
+# --- Bottom Right: Gradient Norm ---
+axs[1, 1].plot(steps, grad_norms, color='tab:purple', marker='.', linestyle='-')
+axs[1, 1].set_title('Gradient Norm (Stability)')
+axs[1, 1].set_xlabel('Steps')
+axs[1, 1].set_ylabel('Norm')
+axs[1, 1].grid(True, alpha=0.3)
+
+# 3. Save
+plt.tight_layout()
+plt.savefig("training_dashboard_qwen.png", dpi=300)
+print("Dashboard saved as 'training_dashboard_qwen.png'")
+
 # ==============================
 # 4. EXPORT ADAPTER
 # ==============================

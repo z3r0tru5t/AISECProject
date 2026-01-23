@@ -85,17 +85,20 @@ class WeakToStrongJailbreak(LogitsProcessor):
         
         with torch.no_grad():
             # Get logits from weak models for the same input
-            safe_out = self.weak_safe(input_ids)
-            unsafe_out = self.weak_unsafe(input_ids)
+            safe_out = self.weak_safe(input_ids=input_ids, use_cache=False)
+            unsafe_out = self.weak_unsafe(input_ids=input_ids, use_cache=False)
         
         # Extract the logits for the *last* token only
         safe_logits = safe_out.logits[:, -1, :]
         unsafe_logits = unsafe_out.logits[:, -1, :]
 
+        safe_lp = torch.log_softmax(safe_logits, dim=-1)
+        unsafe_lp = torch.log_softmax(unsafe_logits, dim=-1)
+
         # --- MATH FIX ---
         # We want to subtract the "Safe" behavior and add the "Unsafe" behavior.
         # Vector = (Unsafe - Safe)
-        harm_vector = unsafe_logits - safe_logits
+        harm_vector = unsafe_lp-safe_lp #unsafe_logits - safe_logits
 
         # Apply to Target
         # Target_New = Target_Old + (Alpha * Vector)
